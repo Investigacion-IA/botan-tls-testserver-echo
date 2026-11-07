@@ -1,10 +1,10 @@
 {
     "configurations": [
         {
-            "name": "Debug HTTPS Server",
+            "name": "Debug TLS Echo Server",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/testserver",
+            "program": "${workspaceFolder}/build/testserver_echo",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

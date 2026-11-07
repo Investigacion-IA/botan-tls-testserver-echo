@@ -1,4 +1,9 @@
+# Botan clients. Browsers do not offer pure ML-KEM, so this policy will not
+# complete a handshake with Firefox or Chrome. Use tls_hybrid_pqc_browser.txt
+# for a browser.
+
 allow_tls13 = true
 allow_tls12 = true
 ciphers = ChaCha20Poly1305 AES-256/GCM
-key_exchange_groups = x25519/Kyber-768-r3 x25519 secp256r1
+key_exchange_groups = ML-KEM-768 ML-KEM-1024 x25519/ML-KEM-768
+require_cert_revocation_info = false
