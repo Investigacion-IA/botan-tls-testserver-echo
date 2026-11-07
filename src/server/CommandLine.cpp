@@ -16,7 +16,8 @@ CommandLineResult parse_command_line(int argc, const char* const argv[]) {
       ("cert", po::value<std::string>()->required(), "Path to the server's certificate chain")
       ("key", po::value<std::string>()->required(), "Path to the server's certificate private key file")
       ("client-ca", po::value<std::string>()->default_value(""), "CA file for client certificates; enables mutual TLS")
-      ("idle-timeout", po::value<uint64_t>()->default_value(60), "Close a connection after this many idle seconds (0 = never)");
+      ("idle-timeout", po::value<uint64_t>()->default_value(60), "Close a connection after this many idle seconds (0 = never)")
+      ("pkcs11-module", po::value<std::string>()->default_value(""), "PKCS#11 library to load and initialize (C_Initialize)");
    // clang-format on
 
    CommandLineResult result;
@@ -46,5 +47,6 @@ CommandLineResult parse_command_line(int argc, const char* const argv[]) {
    options.key = vm["key"].as<std::string>();
    options.client_ca = vm["client-ca"].as<std::string>();
    options.idle_timeout_seconds = vm["idle-timeout"].as<uint64_t>();
+   options.pkcs11_module = vm["pkcs11-module"].as<std::string>();
    return result;
 }

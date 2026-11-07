@@ -28,6 +28,7 @@ TEST(CommandLineTest, RequiredOptionsOnlyUseTheDefaults) {
    EXPECT_EQ(result.options.client_ca, "");
    EXPECT_FALSE(result.options.require_client_certificate());
    EXPECT_EQ(result.options.idle_timeout_seconds, 60u);
+   EXPECT_EQ(result.options.pkcs11_module, "");
 }
 
 TEST(CommandLineTest, AllOptionsAreRead) {
@@ -36,7 +37,8 @@ TEST(CommandLineTest, AllOptionsAreRead) {
                               "--cert", "c.pem",
                               "--key", "k.pem",
                               "--client-ca", "ca.pem",
-                              "--idle-timeout", "5"});
+                              "--idle-timeout", "5",
+                              "--pkcs11-module", "/usr/lib/softhsm/libsofthsm2.so"});
 
    ASSERT_EQ(result.status, CommandLineResult::Status::Run) << result.message;
    EXPECT_EQ(result.options.port, 8443);
@@ -44,6 +46,7 @@ TEST(CommandLineTest, AllOptionsAreRead) {
    EXPECT_EQ(result.options.client_ca, "ca.pem");
    EXPECT_TRUE(result.options.require_client_certificate());
    EXPECT_EQ(result.options.idle_timeout_seconds, 5u);
+   EXPECT_EQ(result.options.pkcs11_module, "/usr/lib/softhsm/libsofthsm2.so");
 }
 
 TEST(CommandLineTest, MissingRequiredOptionIsAnError) {

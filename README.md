@@ -398,6 +398,7 @@ flowchart TB
 | Directory | Responsibility |
 |---|---|
 | `src/common` | `ILogger`, `StderrLogger`, benign-disconnect detection, cancelling pending I/O |
+| `src/pkcs11` | Loading the PKCS#11 library and `C_Initialize`, the starting point for keys in an HSM |
 | `src/tls` | Credentials (server chain and key, client CA), TLS 1.3-only `ServerPolicy`, policy loading, negotiated-session logging |
 | `src/server` | Command line, TLS context creation, TCP accept loop, TLS session handler, echo protocol handler, `ServerApp` |
 | `src/echo` | `serve_echo`: the echo loop with its idle timeout, generic over any async stream |
@@ -512,6 +513,7 @@ build/testserver_echo --cert certs/server.pem --key certs/server.key --port 5044
 | `--policy` | `default` | Botan policy file. TLS 1.3 is forced either way |
 | `--client-ca` | none | PEM file with the CAs trusted for client certificates. Turns on mutual TLS |
 | `--idle-timeout` | `60` | Seconds of silence before a connection is closed, `0` for never |
+| `--pkcs11-module` | none | PKCS#11 library to load at startup. Only `C_Initialize` is called for now; the TLS key still comes from `--key` |
 
 Policies:
 

@@ -1,6 +1,7 @@
 #include "server/ServerApp.hpp"
 
 #include "common/NetErrors.hpp"
+#include "pkcs11/Pkcs11Module.hpp"
 #include "server/EchoProtocolHandler.hpp"
 #include "server/TcpListener.hpp"
 #include "server/TlsContextFactory.hpp"
@@ -26,6 +27,12 @@ ServerApp::ServerApp(ServerOptions options, std::shared_ptr<ILogger> logger) :
 
 int ServerApp::run() {
    try {
+      std::unique_ptr<Botan::PKCS11::Module> pkcs11;
+      if(!options_.pkcs11_module.empty()) {
+         pkcs11 = initialize_pkcs11_module(options_.pkcs11_module);
+         logger_->info("PKCS#11 module " + options_.pkcs11_module + " initialized");
+      }
+
       auto tls_context = create_tls_context(options_);
 
       auto echo = std::make_shared<EchoProtocolHandler>(std::chrono::seconds(options_.idle_timeout_seconds), logger_);
