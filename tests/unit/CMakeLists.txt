@@ -20,7 +20,7 @@ add_executable(${PROJECT_NAME}_tests
 
 target_compile_definitions(${PROJECT_NAME}_tests
                            PRIVATE
-                             TEST_FIXTURE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/fixtures")
+                             TEST_FIXTURE_DIR="${CMAKE_SOURCE_DIR}/tests/fixtures")
 
 target_include_directories(${PROJECT_NAME}_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 

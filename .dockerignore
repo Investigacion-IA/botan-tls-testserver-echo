@@ -1,0 +1,5 @@
+*
+!3rdparty/install.sh
+!CMakeLists.txt
+!src/
+!policies/
