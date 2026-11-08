@@ -4,14 +4,14 @@ Documentation       End-to-end tests of the TLS 1.3 echo server, running in Dock
 ...                 = Virtualization =
 ...
 ...                 The server under test does not run on the host. ``Suite Setup`` of this directory runs
-...                 ``docker compose up --build --wait`` with ``tests/e2e/docker-compose.yml``, which starts two
+...                 ``docker compose up --build --wait`` with ``docker/docker-compose.yml``, which starts two
 ...                 containers from the image ``testserver_echo:e2e``:
 ...
 ...                 | =Service= | =Host port= | =Server options= | =Used by= |
 ...                 | ``echo`` | ``127.0.0.1:50445`` | ``--policy policies/tls13_pqc.txt --idle-timeout 3`` | ``echo.robot``, ``benchmark.robot`` |
 ...                 | ``echo-mtls`` | ``127.0.0.1:50446`` | ``--policy policies/tls13_pqc.txt --client-ca /certs/ca.pem`` | ``mtls.robot``, ``benchmark.robot`` |
 ...
-...                 The image is built by the ``Dockerfile`` in the repository root in three stages:
+...                 The image is built by ``docker/Dockerfile``, with the repository root as build context, in three stages:
 ...
 ...                 - ``deps``: Ubuntu 26.04 with Boost and Botan 3 built by ``3rdparty/install.sh``. This is the
 ...                 slow part (15 to 25 minutes the first time) and is cached by Docker afterwards, since it only

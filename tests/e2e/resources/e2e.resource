@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation       Variables and keywords shared by the end-to-end suites.
 ...
-...                 The echo servers run in Docker (see ``tests/e2e/docker-compose.yml``) and publish their
+...                 The echo servers run in Docker (see ``docker/docker-compose.yml``) and publish their
 ...                 ports on ``127.0.0.1``; every request in these suites is made from the host.
 
 Library             OperatingSystem
@@ -13,7 +13,7 @@ Library             ../libraries/EchoClient.py    server_name=${SERVER_NAME}    
 *** Variables ***
 ${REPO_ROOT}            ${{ os.path.normpath(r'${CURDIR}/../../..') }}
 ${E2E_DIR}              ${REPO_ROOT}/tests/e2e
-${COMPOSE_FILE}         ${E2E_DIR}/docker-compose.yml
+${COMPOSE_FILE}         ${REPO_ROOT}/docker/docker-compose.yml
 ${FIXTURES}             ${REPO_ROOT}/tests/fixtures
 ${CA_FILE}              ${FIXTURES}/ca.pem
 ${CLIENT_CERT}          ${FIXTURES}/client.pem
@@ -23,7 +23,7 @@ ${SERVER_NAME}          localhost
 ${HOST}                 127.0.0.1
 ${ECHO_PORT}            50445
 ${MTLS_PORT}            50446
-# Must match --idle-timeout of the "echo" service in docker-compose.yml.
+# Must match --idle-timeout of the "echo" service in docker/docker-compose.yml.
 ${IDLE_TIMEOUT}         ${3}
 # The first build compiles Boost and Botan inside Docker; later builds come from the layer cache.
 ${BUILD_TIMEOUT}        60 min

@@ -1,7 +1,8 @@
 # TLS 1.3 echo server image, built from scratch: Boost and Botan 3 come from 3rdparty/install.sh.
+# The build context is the repository root; Dockerfile.dockerignore next to this file limits it.
 #
-#   docker build -t testserver_echo .
-#   docker run --rm -p 50445:50445 -v "$PWD/tests/fixtures:/certs:ro" testserver_echo \
+#   docker build -f docker/Dockerfile -t testserver_echo .
+#   docker run --rm -p 50445:50445 -v "$PWD/tests/fixtures:/certs:ro" --user "$(id -u):$(id -g)" testserver_echo \
 #      --port 50445 --cert /certs/server.pem --key /certs/server.key --policy policies/tls13_pqc.txt
 
 ARG UBUNTU=ubuntu:26.04

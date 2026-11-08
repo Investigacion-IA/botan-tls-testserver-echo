@@ -58,7 +58,7 @@ TLS 1.2 Client Is Refused
 
 Idle Connection Is Closed By The Server
     [Documentation]    After one echo the client stays silent; the server closes the connection after its
-    ...    idle timeout (``--idle-timeout ${IDLE_TIMEOUT}`` in ``docker-compose.yml``), not before.
+    ...    idle timeout (``--idle-timeout ${IDLE_TIMEOUT}`` in ``docker/docker-compose.yml``), not before.
     Open TLS Connection    ${HOST}    ${ECHO_PORT}
     Echo Should Match    still there?\n
     ${elapsed}=    Connection Should Be Closed By Peer Within    ${IDLE_TIMEOUT + 5}

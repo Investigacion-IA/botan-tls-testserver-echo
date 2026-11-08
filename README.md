@@ -404,7 +404,8 @@ flowchart TB
 | `src/echo` | `serve_echo`: the echo loop with its idle timeout, generic over any async stream |
 | `policies` | Botan TLS policy files |
 | `tests/unit` | GoogleTest/GoogleMock tests and a blocking TLS test client |
-| `tests/e2e` | Robot Framework suites against the server in Docker |
+| `tests/e2e` | Robot Framework suites against the server in Docker, see [tests/e2e/README.md](tests/e2e/README.md) |
+| `docker` | `Dockerfile` of the server image and the compose file of the end-to-end environment |
 | `tests/fixtures` | Test certificates, shared by the unit and end-to-end tests |
 
 To serve something other than an echo, implement `IProtocolHandler::serve` and
@@ -428,7 +429,7 @@ to `cmake` to build without them.
 To build a container image instead, without installing anything on the host:
 
 ```bash
-docker build -t testserver_echo .
+docker build -f docker/Dockerfile -t testserver_echo .
 docker run --rm -p 50445:50445 -v "$PWD/certs:/certs:ro" --user "$(id -u):$(id -g)" testserver_echo \
    --port 50445 --cert /certs/server.pem --key /certs/server.key --policy policies/tls13_pqc.txt
 ```
@@ -463,51 +464,14 @@ scripts/run-e2e.sh --include benchmark --variable BENCH_CLIENTS:100
 ```
 
 The script installs Robot Framework into `.venv` and runs `robot` on
-`tests/e2e`. Any extra arguments go to `robot`. `tests/e2e/__init__.robot`
-builds the image and starts the containers before the suites, and stops them
-afterwards:
+`tests/e2e`. Any extra arguments go to `robot`. The server runs in two
+containers built from `docker/Dockerfile` and started with
+`docker/docker-compose.yml`. The clients run on the host, so every request
+crosses the Docker port mapping. Results go to `build/e2e-results`.
 
-```mermaid
-flowchart LR
-    subgraph host [Host]
-        robot["robot tests/e2e"] --> py["EchoClient.py, Python ssl"]
-        robot --> ossl["openssl s_client"]
-        robot --> bench["scripts/benchmark.sh, botan tls_client"]
-    end
-    subgraph docker [Docker]
-        echo["echo :50445<br/>--idle-timeout 3"]
-        mtls["echo-mtls :50446<br/>--client-ca"]
-    end
-    py -->|127.0.0.1:50445| echo
-    ossl -->|127.0.0.1:50445| echo
-    bench -->|127.0.0.1:50445| echo
-    py -->|127.0.0.1:50446| mtls
-    bench -->|127.0.0.1:50446| mtls
-```
-
-- The image is built by the `Dockerfile` in the repository root. Its first
-  stage builds Boost and Botan with `3rdparty/install.sh`, which takes 15 to 25
-  minutes the first time. Docker caches that stage, so later runs only rebuild
-  the server.
-- `tests/e2e/docker-compose.yml` starts two containers from that image, with
-  `tests/fixtures` mounted read-only at `/certs`. Their ports are published on
-  `127.0.0.1` only.
-- The clients run on the host, so every request crosses the Docker port
-  mapping.
-
-| Suite | Tag | Container | Checks |
-|---|---|---|---|
-| `echo.robot` | `functional` | `echo` | TLS 1.3 handshake, text, 1 MiB binary, `X25519MLKEM768`, TLS 1.2 refused, idle timeout, 50 concurrent clients |
-| `mtls.robot` | `mtls` | `echo-mtls` | Echo with a client certificate, refusal without one, concurrent mutual TLS clients |
-| `benchmark.robot` | `benchmark` | both | `scripts/benchmark.sh` with and without client certificates, every client must get its text back |
-
-The results go to `build/e2e-results`: Robot's `report.html` and `log.html`,
-plus `docker-compose.log` with the logs of both containers. You need Docker
-with Compose v2 (usable without `sudo`) and Python 3. The hybrid group test
-needs OpenSSL 3.5 or newer on the host. The benchmark needs `botan` in the
-`PATH`, and its tests are skipped without it. The documentation of
-`tests/e2e/__init__.robot` describes the setup in more detail and shows up in
-`log.html`.
+[tests/e2e/README.md](tests/e2e/README.md) describes the virtualization of
+these tests (image, containers, certificates, request path), the suites and
+their tags, the requirements and the results.
 
 ## Benchmark
 

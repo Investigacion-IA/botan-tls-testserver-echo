@@ -1,16 +1,16 @@
 # End-to-end environment: two echo servers from the same image, reached from the host on 127.0.0.1.
-# Started and stopped by tests/e2e/__init__.robot; see the documentation there.
+# Started and stopped by tests/e2e/__init__.robot; see tests/e2e/README.md.
 name: testserver-echo-e2e
 
 x-echo-server: &echo-server
   image: testserver_echo:e2e
   build:
-    context: ../..
-    dockerfile: Dockerfile
+    context: ..
+    dockerfile: docker/Dockerfile
   # The fixture keys are readable by their owner only, so run as the host user that owns them.
   user: "${E2E_UID:-1000}:${E2E_GID:-1000}"
   volumes:
-    - ../fixtures:/certs:ro
+    - ../tests/fixtures:/certs:ro
   init: true
 
 services:
